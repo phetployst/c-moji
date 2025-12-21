@@ -1,0 +1,39 @@
+[
+  {
+    "id": "smileys",
+    "title": "Smileys & Emotion",
+    "items": [
+      { "symbol": "😀", "name": "grinning face" },
+      { "symbol": "😂", "name": "joy" },
+      { "symbol": "😍", "name": "heart eyes" },
+      { "symbol": "🥹", "name": "holding tears" }
+    ]
+  },
+  {
+    "id": "animals",
+    "title": "Animals",
+    "items": [
+      { "symbol": "🐶", "name": "dog" },
+      { "symbol": "🐱", "name": "cat" },
+      { "symbol": "🐼", "name": "panda" }
+    ]
+  },
+  {
+    "id": "food",
+    "title": "Food",
+    "items": [
+      { "symbol": "🍕", "name": "pizza" },
+      { "symbol": "🍔", "name": "burger" },
+      { "symbol": "🍣", "name": "sushi" }
+    ]
+  },
+  {
+    "id": "symbols",
+    "title": "Symbols",
+    "items": [
+      { "symbol": "❤️", "name": "heart" },
+      { "symbol": "🔥", "name": "fire" },
+      { "symbol": "✨", "name": "sparkles" }
+    ]
+  }
+]

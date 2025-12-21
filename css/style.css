@@ -1,0 +1,117 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont;
+  background: #fff;
+}
+
+/* header */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #fff;
+  padding: 14px;
+  border-bottom: 1px solid #eee;
+  text-align: center;
+}
+
+.header h1 {
+  margin: 0 0 8px;
+  font-size: 22px;
+}
+
+.header span {
+  color: #4caf50;
+}
+
+#search {
+  width: 90%;
+  max-width: 420px;
+  padding: 10px;
+  font-size: 15px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+/* category bar */
+.category-bar {
+  position: sticky;
+  top: 86px;
+  z-index: 15;
+  background: #000;
+  display: flex;
+  gap: 18px;
+  padding: 10px 16px;
+  overflow-x: auto;
+}
+
+.cat-icon img {
+  width: 26px;
+  height: 26px;
+  opacity: 0.5;
+  transition: 0.2s;
+}
+
+.cat-icon:hover img {
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+/* content */
+.category {
+  scroll-margin-top: 80px;
+}
+
+.category h2 {
+  margin: 0 0 10px;
+  font-size: 14px;
+  color: gray;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+  gap: 10px;
+}
+
+.emoji {
+  font-size: 28px;
+  text-align: center;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: 0.15s;
+}
+
+.emoji:hover {
+  background: #f2f2f2;
+  transform: scale(1.15);
+}
+
+/* toast */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #000;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  opacity: 0;
+  transition: 0.3s;
+}
+
+.toast.show {
+  opacity: 1;
+}
+
+/* smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
