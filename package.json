@@ -1,0 +1,9 @@
+{
+  "name": "c-moji",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "gen:emoji": "node scripts/gen-emoji.js"
+  }
+}
