@@ -60,7 +60,7 @@ const CATEGORY_ORDER = [
 
 // format for frontend
 const result = CATEGORY_ORDER
-  .filter(title => categories[title]) // เอาเฉพาะหมวดที่มีจริง
+  .filter(title => categories[title])
   .map(title => ({
     id: title.toLowerCase().replace(/[^a-z]+/g, "-"),
     title,
