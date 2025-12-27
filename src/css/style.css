@@ -2,54 +2,91 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
-  background: #fff;
+  background: var(--bg-main);
+  color: var(--text-main);
   font-family: "Nunito", sans-serif;
   font-weight: 400;
 }
 
-/* header */
+/* ======================
+   THEME VARIABLES
+====================== */
+:root {
+  --bg-main: #ffffff;
+  --bg-soft: #fafafa;
+
+  --pink-main: #f4b6c2;
+  --pink-soft: #fdecef;
+
+  --text-main: #111111;
+  --text-muted: #666666;
+
+  --border-light: #e6e6e6;
+}
+
+/* ======================
+   HEADER
+====================== */
 .header {
-  background: #fafafa;
-  box-shadow: 0 1px 0 rgba(0,0,0,0.03);
+  background: var(--bg-soft);
+  border-bottom: 1px solid var(--bg-main);
   padding: 16px 24px;
-  margin: 16px 0;
+  margin-bottom: 8px;
+}
+
+.header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 14px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   text-align: right;
 }
 
 .header h1 {
+  margin: 0;
   font-size: 22px;
   font-weight: 700;
-  margin: 0;
   line-height: 1.2;
   letter-spacing: -0.3px;
 }
 
 .header h2 {
+  margin: 4px 0 12px;
   font-size: 14px;
   font-weight: 400;
-  margin: 4px 0 12px;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .header span {
-  color: #F8C8DC
-;
+  color: var(--pink-main);
 }
 
- #search {
+/* ======================
+   SEARCH
+====================== */
+#search {
   width: 30%;
   max-width: 520px;
-  padding: 14px 18px;
+  height: 42px;
+
+  padding: 0 18px;
   font-size: 14px;
   font-family: inherit;
 
-  border-radius: 16px;
-  border: 1px solid #e6e6e6;
   background: #fafafa;
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
 
-  transition: 
+  transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease,
     background 0.2s ease;
@@ -57,15 +94,16 @@ body {
 
 #search:focus {
   outline: none;
-  background: #fafafa;
-  border-color: #f4b6c2;
+  border-color: var(--pink-main);
   box-shadow: 0 0 0 2px rgba(240, 235, 236, 0.25);
 }
 
-/* content */
+/* ======================
+   CONTENT
+====================== */
 .container {
-  max-width: 1100px;
-  margin: 0 auto 40px;
+  max-width: 1160px;
+  margin: 16px auto 40px;
   padding: 0 24px;
 }
 
@@ -74,9 +112,10 @@ body {
 }
 
 .category h2 {
-  margin: 15px;
-  font-size: 16px;
+  margin: 12px 0;
+  font-size: 14px;
   font-weight: 800;
+  letter-spacing: 0.2px;
   color: gray;
 }
 
@@ -86,53 +125,51 @@ body {
   gap: 10px;
 }
 
+/* ======================
+   EMOJI ITEM
+====================== */
 .emoji {
-  font-size: 30px;
-  text-align: center;
-  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 52px;
+  height: 52px;
+  font-size: 32px;
+
   cursor: pointer;
   border-radius: 10px;
-  transition: 0.15s;
+
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
 }
 
 .emoji:hover {
   background: #f2f2f2;
-  transform: scale(1.15);
+  transform: scale(1.04);
 }
 
-/* toast */
+/* ======================
+   TOAST
+====================== */
 .toast {
   position: fixed;
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background: #000;
-  color: #F8C8DC;
+
   padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 14px;
+  border-radius: 999px;
+
+  background: var(--pink-main);
+  color: #ffffff;
+  font-weight: 500;
+
   opacity: 0;
-  transition: 0.3s;
+  transition: opacity 0.3s ease;
 }
 
 .toast.show {
   opacity: 1;
-}
-
-:root {
-  --bg-main: #ffffff;
-  --bg-soft: #fafafa;
-
-  --pink-main: #f4b6c2;
-  --pink-soft: #fdecef;
-
-  --text-main: #111111;
-  --text-muted: #888888;
-
-  --border-light: #e6e6e6;
-}
-
-/* smooth scroll */
-html {
-  scroll-behavior: smooth;
 }
