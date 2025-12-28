@@ -40,9 +40,16 @@ raw.forEach(e => {
     categories[e.category] = [];
   }
 
+  const skinVariations = e.skin_variations
+    ? Object.values(e.skin_variations).map(v =>
+        unifiedToEmoji(v.unified)
+      )
+    : null;
+
   categories[e.category].push({
     symbol: emoji,
-    name: e.name.toLowerCase()
+    name: e.name.toLowerCase(),
+    skins: skinVariations
   });
 });
 
