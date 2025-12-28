@@ -1,47 +1,113 @@
+// =======================
+// DOM
+// =======================
 const container = document.getElementById("emojiContainer");
 const searchInput = document.getElementById("search");
 const toast = document.getElementById("toast");
+const skinButtons = document.querySelectorAll(".skin-tone button");
 
-let emojiData = [];
+// =======================
+// STATE
+// =======================
+const state = {
+  data: [],
+  search: "",
+  skinIndex: 0,
+};
 
+// =======================
+// DATA FETCH
+// =======================
 fetch("/data/emojis.json")
   .then(res => res.json())
   .then(data => {
-    emojiData = data;
+    state.data = data;
     render(data);
   })
   .catch(err => console.error("fetch error:", err));
 
-searchInput.addEventListener("input", () => {
-  const q = searchInput.value.toLowerCase();
+// =======================
+// EVENTS
+// =======================
 
-  const filtered = emojiData
+// search
+searchInput.addEventListener("input", e => {
+  state.search = e.target.value.toLowerCase();
+  render(getFilteredData());
+});
+
+// emoji click (event delegation)
+container.addEventListener("click", e => {
+  const emojiEl = e.target.closest(".emoji");
+  if (!emojiEl) return;
+
+  copyEmoji(emojiEl.dataset.emoji);
+});
+
+// skin tone selection
+skinButtons.forEach((btn, index) => {
+  btn.addEventListener("click", () => {
+    skinButtons.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    state.skinIndex = index;
+    render(getFilteredData());
+  });
+});
+
+// =======================
+// DATA HELPERS
+// =======================
+function getFilteredData() {
+  if (!state.search) return state.data;
+
+  return state.data
     .map(cat => ({
       ...cat,
       items: cat.items.filter(e =>
-        e.name.toLowerCase().includes(q)
-      )
+        e.name.includes(state.search)
+      ),
     }))
     .filter(cat => cat.items.length > 0);
+}
 
-  render(filtered);
-});
+function getEmojiWithSkin(emoji) {
+  if (emoji.skins && emoji.skins.length > 0) {
+    return emoji.skins[state.skinIndex] || emoji.symbol;
+  }
+  return emoji.symbol;
+}
 
+// =======================
+// RENDER
+// =======================
 function render(categories) {
-  container.innerHTML = categories.map(cat => `
+  container.innerHTML = categories.map(renderCategory).join("");
+}
+
+function renderCategory(cat) {
+  return `
     <section class="category" id="${cat.id}">
       <h2>${cat.title}</h2>
       <div class="grid">
-        ${cat.items.map(e => `
-          <div class="emoji" onclick="copyEmoji('${e.symbol}')">
-            ${e.symbol}
-          </div>
-        `).join("")}
+        ${cat.items.map(renderEmoji).join("")}
       </div>
     </section>
-  `).join("");
+  `;
 }
 
+function renderEmoji(e) {
+  const emoji = getEmojiWithSkin(e);
+  return `
+    <div class="emoji" data-emoji="${emoji}">
+      ${emoji}
+    </div>
+  `;
+}
+
+// =======================
+// ACTIONS
+// =======================
 function copyEmoji(emoji) {
   navigator.clipboard.writeText(emoji);
   toast.classList.add("show");

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>emoji copy</title>
@@ -7,23 +8,39 @@
   <link rel="stylesheet" href="css/style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap"
+    rel="stylesheet">
 </head>
+
 <body>
 
-<header class="header">
-  <div class="header-inner">
-  <h1>emoji<span>copy</span></h1>
-  <h2>Click to copy emojis</h2>
-  <input id="search" type="text" placeholder="Search emojis…" />
+  <header class="header">
+    <div class="header-inner">
+      <div class="brand">
+        <h1>emoji<span>copy</span></h1>
+        <h2>Click to copy emojis</h2>
+      </div>
+      <div class="controls">
+        <input id="search" type="text" placeholder="Search emojis…" />
+        <div class="skin-tone">
+          <button class="active">🏻</button>
+          <button>🏼</button>
+          <button>🏽</button>
+          <button>🏾</button>
+          <button>🏿</button>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <div class="container">
+    <main id="emojiContainer"></main>
+
+    <div id="toast" class="toast">Copied!</div>
+
+    <script src="js/main.js"></script>
   </div>
-</header>
-<div class="container">
-<main id="emojiContainer"></main>
-
-<div id="toast" class="toast">Copied!</div>
-
-<script src="js/main.js"></script>
-</div>
 </body>
+
 </html>
