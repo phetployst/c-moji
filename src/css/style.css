@@ -38,16 +38,21 @@ body {
   border-bottom: 1px solid var(--bg-main);
   padding: 8px 24px;
   margin-bottom: 8px;
+  position: relative;
 }
 
 .header-inner {
-  max-width: 1126px;
+  max-width: 1180px;
   margin: 0 auto;
   padding: 14px;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   text-align: right;
+
+  /* display: flex;
+  justify-content: space-between;
+  align-items: center; */
 }
 
 .header h1 {
@@ -74,10 +79,17 @@ body {
 }
 
 .controls {
+  position: sticky;
+  top: 8px;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 6px;
+
+  background: var(--bg-soft);
+  padding: 8px 0;
+  z-index: 10;
+  backdrop-filter: blur(4px);
 }
 
 /* ======================
@@ -136,7 +148,7 @@ body {
    CONTENT
 ====================== */
 .container {
-  max-width: 1160px;
+  max-width: 1200px;
   margin: 16px auto 40px;
   padding: 0 24px;
 }
@@ -160,6 +172,98 @@ body {
 }
 
 /* ======================
+   CATEGORY NAVIGATION
+====================== */
+
+.category-nav {
+  position: sticky;
+  top: 120px;
+
+  width: 48px;
+  height: calc(100vh - 120px);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+
+  z-index: 20;
+}
+
+/* base button */
+.category-btn {
+  position: relative;
+
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 999px;
+  border: 1px solid var(--border-light);
+  background: var(--bg-soft);
+
+  cursor: pointer;
+
+  opacity: 0.80;
+  transform: scale(0.96);
+
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.category-icon {
+  width: 24px;
+  height: 24px;
+  opacity: 1;
+}
+
+/* ACTIVE (current category) */
+.category-btn.active {
+  opacity: 1;
+  transform: scale(1.12);
+
+  background: var(--pink-soft);
+  border-color: var(--pink-main);
+
+  box-shadow:
+    0 4px 10px rgba(244, 182, 194, 0.35);
+}
+
+/* subtle ring */
+.category-btn.active::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid rgba(244, 182, 194, 0.45);
+}
+
+/* HOVER (only hovered pops) */
+.category-btn:hover {
+  opacity: 1;
+  transform: scale(1.15);
+
+  background: var(--pink-soft);
+  border-color: var(--pink-main);
+
+  box-shadow:
+    0 4px 12px rgba(244, 182, 194, 0.4);
+}
+
+/* fade others gently when hovering nav */
+.category-nav:hover .category-btn:not(:hover):not(.active) {
+  opacity: 0.35;
+  transform: scale(0.92);
+}
+
+/* ======================
    EMOJI ITEM
 ====================== */
 .emoji {
@@ -167,9 +271,9 @@ body {
   align-items: center;
   justify-content: center;
 
-  width: 52px;
-  height: 52px;
-  font-size: 36px;
+  width: 54px;
+  height: 54px;
+  font-size: 40px;
 
   cursor: pointer;
   border-radius: 10px;
@@ -206,4 +310,42 @@ body {
 
 .toast.show {
   opacity: 1;
+}
+
+/* ======================
+   CATEGORY NAVIGATION
+====================== */
+
+.layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.category-nav {
+  position: fixed;
+  top: 120px;
+
+  left: 0;
+
+  width: 48px;
+  height: calc(90vh - 120px);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  gap: 12px;
+
+  opacity: 0.25;
+  transition: opacity 0.2s ease;
+}
+
+.category-nav:hover {
+  opacity: 1;
+}
+
+#emojiContainer {
+  flex: 1;
 }
