@@ -54,6 +54,13 @@ fetch("/data/emojis.json")
 // search
 searchInput.addEventListener("input", e => {
   state.search = e.target.value.toLowerCase();
+
+  if (state.search) {
+    categoryNav.classList.add("hidden");
+  } else {
+    categoryNav.classList.remove("hidden");
+  }
+
   update();
 });
 

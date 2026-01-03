@@ -263,6 +263,15 @@ body {
   transform: scale(0.92);
 }
 
+.category-nav.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-8px);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
 /* ======================
    EMOJI ITEM
 ====================== */
