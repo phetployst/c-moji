@@ -64,7 +64,7 @@ searchInput.addEventListener("input", e => {
   update();
 });
 
-// emoji click (copy)
+// emoji click
 container.addEventListener("click", e => {
   const emojiEl = e.target.closest(".emoji");
   if (!emojiEl) return;
@@ -135,8 +135,12 @@ function renderCategories(categories) {
         ${cat.items.map(e => {
     const emoji = getEmojiWithSkin(e);
     return `
-            <div class="emoji" data-emoji="${emoji}">
-              ${emoji}
+            <div
+            class="emoji"
+            data-emoji="${emoji}"
+            data-name="${e.name.replace(/-/g, " ")}"
+            >
+            ${emoji}
             </div>
           `;
   }).join("")}
@@ -146,7 +150,7 @@ function renderCategories(categories) {
 }
 
 // =======================
-// RENDER CATEGORY NAV (SVG ICON)
+// RENDER CATEGORY NAV
 // =======================
 function renderCategoryNav(categories) {
   categoryNav.innerHTML = categories.map(cat => {
@@ -197,7 +201,6 @@ function observeCategories() {
 
     activeBtn?.classList.add("active");
 
-    // === popup ===
     const title = visible.target.querySelector("h2")?.textContent;
     showCategoryPopup(title);
 
@@ -233,3 +236,32 @@ function copyEmoji(emoji) {
   toast.classList.add("show");
   setTimeout(() => toast.classList.remove("show"), 800);
 }
+
+// =======================
+// TOOLTIP ELEMENT
+// =======================
+const tooltip = document.createElement("div");
+tooltip.className = "emoji-tooltip";
+document.body.appendChild(tooltip);
+
+container.addEventListener("mouseenter", e => {
+  const emojiEl = e.target.closest(".emoji");
+  if (!emojiEl) return;
+
+  const name = emojiEl.dataset.name;
+  if (!name) return;
+
+  const rect = emojiEl.getBoundingClientRect();
+
+  tooltip.textContent = name;
+  tooltip.style.left = `${rect.left + rect.width / 2}px`;
+  tooltip.style.top = `${rect.bottom + 6}px`;
+
+  tooltip.classList.add("show");
+}, true);
+
+container.addEventListener("mouseleave", e => {
+  const emojiEl = e.target.closest(".emoji");
+  if (!emojiEl) return;
+  tooltip.classList.remove("show");
+}, true);
