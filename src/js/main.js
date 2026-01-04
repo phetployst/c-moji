@@ -35,6 +35,8 @@ const state = {
 let observer = null;
 let popupTimeout = null;
 let currentCategoryId = null;
+let tooltipTimer;
+let lastEmoji = null;
 
 // =======================
 // INIT
@@ -244,9 +246,28 @@ const tooltip = document.createElement("div");
 tooltip.className = "emoji-tooltip";
 document.body.appendChild(tooltip);
 
-container.addEventListener("mouseenter", e => {
+container.addEventListener("mouseover", e => {
   const emojiEl = e.target.closest(".emoji");
   if (!emojiEl) return;
+
+  clearTimeout(tooltipTimer);
+
+  tooltipTimer = setTimeout(() => {
+    showEmojiTooltip(emojiEl);
+  }, 115);
+});
+
+container.addEventListener("mouseout", e => {
+  const emojiEl = e.target.closest(".emoji");
+  if (!emojiEl) return;
+
+  clearTimeout(tooltipTimer);
+  hideEmojiTooltip();
+});
+
+function showEmojiTooltip(emojiEl) {
+  if (lastEmoji === emojiEl) return;
+  lastEmoji = emojiEl;
 
   const name = emojiEl.dataset.name;
   if (!name) return;
@@ -258,10 +279,9 @@ container.addEventListener("mouseenter", e => {
   tooltip.style.top = `${rect.bottom + 6}px`;
 
   tooltip.classList.add("show");
-}, true);
+}
 
-container.addEventListener("mouseleave", e => {
-  const emojiEl = e.target.closest(".emoji");
-  if (!emojiEl) return;
+function hideEmojiTooltip() {
+  lastEmoji = null;
   tooltip.classList.remove("show");
-}, true);
+}
