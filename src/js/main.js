@@ -1,16 +1,24 @@
-// =======================
+// ===================================================
 // DOM
-// =======================
+// ===================================================
 const container = document.getElementById("emojiContainer");
 const searchInput = document.getElementById("search");
 const toast = document.getElementById("toast");
+
 const skinButtons = document.querySelectorAll(".skin-tone button");
+
 const categoryNav = document.querySelector(".category-nav");
 const categoryPopup = document.getElementById("categoryPopup");
 
-// =======================
+const emojiTray = document.getElementById("emojiTray");
+const trayEmojis = document.getElementById("trayEmojis");
+const trayCopy = document.getElementById("trayCopy");
+const trayClear = document.getElementById("trayClear");
+
+
+// ===================================================
 // CATEGORY ICON MAP
-// =======================
+// ===================================================
 const CATEGORY_ICONS = {
   "smileys-emotion": "smiley.svg",
   "people-body": "user.svg",
@@ -23,24 +31,29 @@ const CATEGORY_ICONS = {
   "flags": "flag.svg",
 };
 
-// =======================
+
+// ===================================================
 // STATE
-// =======================
+// ===================================================
 const state = {
   data: [],
   search: "",
   skinIndex: 0,
 };
 
+const selectedEmojis = [];
+
 let observer = null;
-let popupTimeout = null;
 let currentCategoryId = null;
-let tooltipTimer;
+let popupTimeout = null;
+
+let tooltipTimer = null;
 let lastEmoji = null;
 
-// =======================
+
+// ===================================================
 // INIT
-// =======================
+// ===================================================
 fetch("/data/emojis.json")
   .then(res => res.json())
   .then(data => {
@@ -49,28 +62,17 @@ fetch("/data/emojis.json")
   })
   .catch(err => console.error("fetch error:", err));
 
-// =======================
+
+// ===================================================
 // EVENTS
-// =======================
+// ===================================================
 
 // search
 searchInput.addEventListener("input", e => {
   state.search = e.target.value.toLowerCase();
 
-  if (state.search) {
-    categoryNav.classList.add("hidden");
-  } else {
-    categoryNav.classList.remove("hidden");
-  }
-
+  categoryNav.classList.toggle("hidden", !!state.search);
   update();
-});
-
-// emoji click
-container.addEventListener("click", e => {
-  const emojiEl = e.target.closest(".emoji");
-  if (!emojiEl) return;
-  copyEmoji(emojiEl.dataset.emoji);
 });
 
 // skin tone
@@ -78,12 +80,28 @@ skinButtons.forEach((btn, index) => {
   btn.addEventListener("click", () => {
     skinButtons.forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
+
     state.skinIndex = index;
     update();
   });
 });
 
-// category nav click
+// emoji click
+container.addEventListener("click", e => {
+  const emojiEl = e.target.closest(".emoji");
+  if (!emojiEl) return;
+
+  const emoji = emojiEl.dataset.emoji;
+
+  copyToClipboard(emoji);
+  selectedEmojis.push(emoji);
+  renderTray();
+
+  emojiEl.classList.add("clicked");
+  setTimeout(() => emojiEl.classList.remove("clicked"), 120);
+});
+
+// category click
 categoryNav.addEventListener("click", e => {
   const btn = e.target.closest(".category-btn");
   if (!btn) return;
@@ -93,9 +111,10 @@ categoryNav.addEventListener("click", e => {
     ?.scrollIntoView({ behavior: "smooth" });
 });
 
-// =======================
+
+// ===================================================
 // UPDATE PIPELINE
-// =======================
+// ===================================================
 function update() {
   const filtered = getFilteredData();
   renderCategories(filtered);
@@ -103,9 +122,10 @@ function update() {
   observeCategories();
 }
 
-// =======================
+
+// ===================================================
 // DATA HELPERS
-// =======================
+// ===================================================
 function getFilteredData() {
   if (!state.search) return state.data;
 
@@ -126,57 +146,56 @@ function getEmojiWithSkin(emoji) {
   return emoji.symbol;
 }
 
-// =======================
+
+// ===================================================
 // RENDER EMOJIS
-// =======================
+// ===================================================
 function renderCategories(categories) {
   container.innerHTML = categories.map(cat => `
     <section class="category" id="${cat.id}">
       <h2>${cat.title}</h2>
       <div class="grid">
         ${cat.items.map(e => {
-    const emoji = getEmojiWithSkin(e);
-    return `
+          const emoji = getEmojiWithSkin(e);
+          return `
             <div
-            class="emoji"
-            data-emoji="${emoji}"
-            data-name="${e.name.replace(/-/g, " ")}"
+              class="emoji"
+              data-emoji="${emoji}"
+              data-name="${e.name.replace(/-/g, " ")}"
             >
-            ${emoji}
+              ${emoji}
             </div>
           `;
-  }).join("")}
+        }).join("")}
       </div>
     </section>
   `).join("");
 }
 
-// =======================
-// RENDER CATEGORY NAV
-// =======================
-function renderCategoryNav(categories) {
-  categoryNav.innerHTML = categories.map(cat => {
-    const icon = CATEGORY_ICONS[cat.id];
 
-    return `
-      <button
-        class="category-btn"
-        data-id="${cat.id}"
-        title="${cat.title}"
-      >
-        <img
-          src="icons/${icon}"
-          alt="${cat.title}"
-          class="category-icon"
-        />
-      </button>
-    `;
-  }).join("");
+// ===================================================
+// CATEGORY NAV
+// ===================================================
+function renderCategoryNav(categories) {
+  categoryNav.innerHTML = categories.map(cat => `
+    <button
+      class="category-btn"
+      data-id="${cat.id}"
+      title="${cat.title}"
+    >
+      <img
+        src="icons/${CATEGORY_ICONS[cat.id]}"
+        class="category-icon"
+        alt="${cat.title}"
+      />
+    </button>
+  `).join("");
 }
 
-// =======================
+
+// ===================================================
 // INTERSECTION OBSERVER
-// =======================
+// ===================================================
 function observeCategories() {
   if (observer) observer.disconnect();
 
@@ -188,7 +207,6 @@ function observeCategories() {
     if (!visible) return;
 
     const id = visible.target.id;
-
     if (currentCategoryId === id) return;
 
     currentCategoryId = id;
@@ -197,9 +215,8 @@ function observeCategories() {
       .querySelectorAll(".category-btn")
       .forEach(btn => btn.classList.remove("active"));
 
-    const activeBtn = categoryNav.querySelector(
-      `[data-id="${id}"]`
-    );
+    const activeBtn =
+      categoryNav.querySelector(`[data-id="${id}"]`);
 
     activeBtn?.classList.add("active");
 
@@ -207,7 +224,7 @@ function observeCategories() {
     showCategoryPopup(title);
 
   }, {
-    threshold: [0.25, 0.5, 0.75]
+    threshold: [0.3, 0.6]
   });
 
   document
@@ -215,9 +232,10 @@ function observeCategories() {
     .forEach(section => observer.observe(section));
 }
 
-// =======================
-// POPUP
-// =======================
+
+// ===================================================
+// CATEGORY POPUP
+// ===================================================
 function showCategoryPopup(text) {
   if (!text) return;
 
@@ -230,18 +248,10 @@ function showCategoryPopup(text) {
   }, 1200);
 }
 
-// =======================
-// ACTIONS
-// =======================
-function copyEmoji(emoji) {
-  navigator.clipboard.writeText(emoji);
-  toast.classList.add("show");
-  setTimeout(() => toast.classList.remove("show"), 800);
-}
 
-// =======================
-// TOOLTIP ELEMENT
-// =======================
+// ===================================================
+// TOOLTIP (emoji name)
+// ===================================================
 const tooltip = document.createElement("div");
 tooltip.className = "emoji-tooltip";
 document.body.appendChild(tooltip);
@@ -253,35 +263,73 @@ container.addEventListener("mouseover", e => {
   clearTimeout(tooltipTimer);
 
   tooltipTimer = setTimeout(() => {
-    showEmojiTooltip(emojiEl);
-  }, 115);
+    if (lastEmoji === emojiEl) return;
+    lastEmoji = emojiEl;
+
+    const rect = emojiEl.getBoundingClientRect();
+
+    tooltip.textContent = emojiEl.dataset.name;
+    tooltip.style.left = `${rect.left + rect.width / 2}px`;
+    tooltip.style.top = `${rect.bottom + 6}px`;
+
+    tooltip.classList.add("show");
+  }, 110);
 });
 
-container.addEventListener("mouseout", e => {
-  const emojiEl = e.target.closest(".emoji");
-  if (!emojiEl) return;
-
+container.addEventListener("mouseout", () => {
   clearTimeout(tooltipTimer);
-  hideEmojiTooltip();
-});
-
-function showEmojiTooltip(emojiEl) {
-  if (lastEmoji === emojiEl) return;
-  lastEmoji = emojiEl;
-
-  const name = emojiEl.dataset.name;
-  if (!name) return;
-
-  const rect = emojiEl.getBoundingClientRect();
-
-  tooltip.textContent = name;
-  tooltip.style.left = `${rect.left + rect.width / 2}px`;
-  tooltip.style.top = `${rect.bottom + 6}px`;
-
-  tooltip.classList.add("show");
-}
-
-function hideEmojiTooltip() {
   lastEmoji = null;
   tooltip.classList.remove("show");
+});
+
+
+// ===================================================
+// EMOJI TRAY
+// ===================================================
+function renderTray() {
+  if (selectedEmojis.length < 2) {
+    emojiTray.classList.remove("show");
+    return;
+  }
+
+  trayEmojis.innerHTML = selectedEmojis
+    .map(e => `<span class="tray-emoji">${e}</span>`)
+    .join("");
+
+  emojiTray.classList.add("show");
+}
+
+trayCopy.addEventListener("click", () => {
+  if (!selectedEmojis.length) return;
+
+  navigator.clipboard.writeText(selectedEmojis.join(""));
+
+  trayCopy.textContent = "Copied";
+  trayCopy.disabled = true;
+
+  setTimeout(() => {
+    selectedEmojis.length = 0;
+    renderTray();
+
+    trayCopy.textContent = "Copy";
+    trayCopy.disabled = false;
+  }, 700);
+});
+
+trayClear.addEventListener("click", () => {
+  selectedEmojis.length = 0;
+  renderTray();
+});
+
+
+// ===================================================
+// HELPERS
+// ===================================================
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text);
+
+  toast.textContent = "Copied!";
+  toast.classList.add("show");
+
+  setTimeout(() => toast.classList.remove("show"), 700);
 }
